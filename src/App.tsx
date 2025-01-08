@@ -1,12 +1,16 @@
+import { BrowserRouter } from "react-router"
+import { PublicRouter } from "./router/"
+import { NavBar } from "./layouts"
 
 
-function App() {
+const App = ()  => {
   
 
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <BrowserRouter>
+      <NavBar />
+      <PublicRouter/>
+    </BrowserRouter>
   )
 }
 
