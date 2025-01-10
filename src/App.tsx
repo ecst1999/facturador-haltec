@@ -1,15 +1,14 @@
 import { BrowserRouter } from "react-router"
-import { PublicRouter } from "./router/"
 import { NavBar } from "./layouts"
+import { RouterIndex } from "./router/"
 
 
 const App = ()  => {
   
 
   return (
-    <BrowserRouter>
-      <NavBar />
-      <PublicRouter/>
+    <BrowserRouter>      
+      <RouterIndex/>
     </BrowserRouter>
   )
 }

@@ -25,7 +25,7 @@ export const Login = () => {
   }
 
 
-  return <div className="grid justify-items-center">
+  return <div className="grid justify-items-center p-3">
 
     <p className="text-body-2">Iniciar sesión</p>
 

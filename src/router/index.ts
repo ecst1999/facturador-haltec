@@ -1,4 +1,2 @@
 
-
-export * from "./PublicRouter"
-export * from "./PrivateRouter"
+export * from "./RouterIndex"
