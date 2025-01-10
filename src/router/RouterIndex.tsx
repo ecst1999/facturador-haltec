@@ -11,7 +11,7 @@ export const RouterIndex = () => {
 
     useEffect(() => {
         checkAuth()        
-    }, [status]);
+    }, []);
     
 
   return (
