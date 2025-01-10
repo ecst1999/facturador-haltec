@@ -1,9 +1,12 @@
 import { Navbar, NavbarItem, NavbarContainer, NavbarBrand, NavbarList, NavbarCollapseBtn, NavbarCollapse, Button } from "keep-react"
+import { UseAuthStore } from "../hooks"
 
 export const NavBarLayout = () => {
 
+  const { logoutFetch } = UseAuthStore();
+
   const onCerrarSesion = () => {
-    console.log("cerrando sesión....")
+    logoutFetch()
   }
 
   return (
@@ -12,17 +15,15 @@ export const NavBarLayout = () => {
         <NavbarBrand>
           <img src="/vite.svg" alt="keep" />
         </NavbarBrand>
-        <NavbarList>                    
-          <NavbarItem>Figma</NavbarItem>
-          <NavbarItem>Documentation</NavbarItem>
-          <NavbarItem>Blog</NavbarItem>
+        <NavbarList>                        
+          <NavbarItem> Crear y validar Factura</NavbarItem>           
+          <NavbarItem>Obtener Facturas</NavbarItem>          
           <Button variant="outline" color="error" onClick={onCerrarSesion}>Cerrar sesión</Button>
         </NavbarList>
         <NavbarCollapseBtn />
-        <NavbarCollapse>
-          <NavbarItem>Figma</NavbarItem>
-          <NavbarItem>Documentation</NavbarItem>
-          <NavbarItem>Blog</NavbarItem>
+        <NavbarCollapse> 
+          <NavbarItem>Crear y validar Factura</NavbarItem>
+          <NavbarItem>Obtener Facturas</NavbarItem>          
           <Button variant="outline" color="error" onClick={onCerrarSesion}>Cerrar sesión</Button>
         </NavbarCollapse>
       </NavbarContainer>

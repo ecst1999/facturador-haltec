@@ -1,5 +1,4 @@
 import { BrowserRouter } from "react-router"
-import { NavBar } from "./layouts"
 import { RouterIndex } from "./router/"
 
 

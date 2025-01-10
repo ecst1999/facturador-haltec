@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { UseAuthStore } from "../hooks";
 import {  Navigate, Route, Routes } from "react-router";
-import { NavBarLayout } from "../layouts";
+import { LoadingLayout, NavBarLayout } from "../layouts";
 import { FacturaForm, Home, Login } from "../pages";
 
 
@@ -11,23 +11,25 @@ export const RouterIndex = () => {
 
     useEffect(() => {
         checkAuth()        
-    }, []);
+    }, [status]);
     
 
   return (
     <>
+
+        {
+            (status === 'loading') && <LoadingLayout />
+        }
         
         {
-            // (status === 'authenticated')
-            (true)
+            (status === 'authenticated')            
             && <NavBarLayout />                                    
         }
 
         <Routes>
             {
                 (status === 'not-authenticated')
-                ? (
-                  
+                ? (                  
                     <>
                         {/* Rutas públicas */}
                         <Route path="/auth/*" element={ <Login /> }/>

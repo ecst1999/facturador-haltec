@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 export const AuthSlice = createSlice({
     name: 'auth',
     initialState: {
-        status: 'checking', // 'authenticated','not-authenticated',
+        status: 'loading', // 'authenticated','not-authenticated', 'loading',
         isLoading: false,
         token_type: "",
         expires_in: 0,
@@ -25,9 +25,7 @@ export const AuthSlice = createSlice({
                 state.access_token = payload.access_token
                 state.refresh_token = payload.refresh_token
                 state.status = "authenticated"
-            }
-                        
-            
+            }                        
 
         },
         onLogOut: (state, { payload }) => {
