@@ -22,8 +22,7 @@ export const UseAuthStore = () => {
                 password
             })
 
-            localStorage.setItem('token', data.access_token)
-            localStorage.setItem('expires-in', data.expires_in)
+            localStorage.setItem('token', data.access_token)            
             localStorage.setItem('token-init-date', `${new Date().getTime()}`)
             localStorage.setItem('r-token', data.refresh_token)
             return dispatch(onLogin(data))
@@ -36,19 +35,19 @@ export const UseAuthStore = () => {
     }
 
     const checkAuth = async () => {        
+
         const token = localStorage.getItem('token')
         const refresh_token = localStorage.getItem('r-token')
-        let fech = parseInt(localStorage.getItem('token-init-date') || "0")
+        let fech = await parseInt(localStorage.getItem('token-init-date') || "0")
+
+        fech = fech > 0 ? fech + 3600000 : 0          
         
-        fech = fech > 0 ? fech + 3600000 : 0
+        if( !token ) return logoutFetch()
+            
 
-        setTimeout(() => {
-            if( !token ) return logoutFetch()
-        }, 2000); 
-
-        if(fech == null || fech <= new Date().getTime()  ) {
+        if(fech <= new Date().getTime()  ) {                        
             logoutFetch()
-        } else{
+        } else if((new Date().getTime() +  300000) >= fech){
 
             try{
             
@@ -59,22 +58,30 @@ export const UseAuthStore = () => {
                     refresh_token: refresh_token
                 })
     
-                localStorage.setItem('token', data.access_token)
-                localStorage.setItem('expires-in', data.expires_in)
+                localStorage.setItem('token', data.access_token)                
                 localStorage.setItem('token-init-date', `${new Date().getTime()}`)
                 localStorage.setItem('r-token', data.refresh_token)
                 return dispatch(onLogin(data))
                     
-            }catch(error){
+            }catch(error){                
                 return logoutFetch()         
             }
+        }else{
+            const valoresLogin = {
+                access_token: token,
+                token_type : "Bearer",
+                expires_in : 3600,
+                refresh_token : refresh_token,                
+            }
+
+            return dispatch(onLogin(valoresLogin))
         }
+
         
     }
 
     const logoutFetch = () => {
-        localStorage.removeItem("token")
-        localStorage.removeItem("expires-in")
+        localStorage.removeItem("token")        
         localStorage.removeItem("token-init-date")        
         localStorage.removeItem("r-token")        
         return dispatch(onLogOut(null))        

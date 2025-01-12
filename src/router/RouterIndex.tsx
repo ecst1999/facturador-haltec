@@ -41,7 +41,7 @@ export const RouterIndex = () => {
                         {/* Rutas privadas */}
                         <Route path="/home" element={ <Home /> }/>
                         <Route path="/factura-form" element={ <FacturaForm /> }/>
-                        <Route path="/*" element={ <Navigate to="/home"/> } />
+                        <Route path="/*" element={ <Navigate to="/factura-form"/> } />
                     </>
                 )
             }
