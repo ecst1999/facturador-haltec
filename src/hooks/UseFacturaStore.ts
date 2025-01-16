@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from "react-redux"
 import baseApi from "../api/base/baseApi"
-import { onLoadNumeracion } from "../store"
+import { onLoadMunicipalidades, onLoadNumeracion } from "../store"
 import { getToken } from "../helpers"
 
 
 export const UseFacturaStore = () => {
 
     const dispatch = useDispatch()
-    const { rangos_numeracion } = useSelector(state => state.factura)
+    const { rangos_numeracion, municipalidades } = useSelector(state => state.factura)
 
     const token = getToken();
 
@@ -19,11 +19,19 @@ export const UseFacturaStore = () => {
         dispatch(onLoadNumeracion(data.data))
     }
 
+    const getMunicipales = async() => {
+      const { data } = await baseApi.get('/v1/municipalities', {headers})
+
+      dispatch(onLoadMunicipalidades(data.data))      
+    }
+
   return {
     //Properties
     rangos_numeracion,
+    municipalidades,
 
     //Methods
     getNumeracion,
+    getMunicipales,
   }
 }

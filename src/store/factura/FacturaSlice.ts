@@ -6,7 +6,8 @@ export const FacturaSlice = createSlice({
     name: 'factura',
     initialState: {
         rangos_numeracion: [],
-        isLoading: false
+        isLoading: false,
+        municipalidades: [],
     },
     reducers: {
         onLoadNumeracion: (state, {payload = []}) => {
@@ -14,17 +15,32 @@ export const FacturaSlice = createSlice({
 
             
             payload.forEach(r => {
-                const exists = state.rangos_numeracion.some( doc => doc.id === r.id );
+                const exists = state.rangos_numeracion.some( doc => doc.id === r.id )
                 if(!exists){
                     state.rangos_numeracion.push(r)
                 }
             })
+
+            state.isLoading = false
             
+        },
+        onLoadMunicipalidades: (state, {payload = []}) => {
+            state.isLoading = true
+
+            payload.forEach(r => {
+                const exists = state.municipalidades.some(mun => mun.id === r.id)
+                if(!exists){
+                    state.municipalidades.push(r)
+                }
+            })
+
+            state.isLoading = false
         }
     }
 })
 
 
 export const {
-    onLoadNumeracion
+    onLoadNumeracion,
+    onLoadMunicipalidades
 } = FacturaSlice.actions
