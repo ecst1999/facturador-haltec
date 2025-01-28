@@ -1,6 +1,7 @@
 import { Button, Input, Textarea } from "keep-react";
-import { UseFacturaStore } from "../../hooks";
-import React, { useEffect } from "react";
+import { UseFacturaStore, UseForm } from "../../hooks";
+import React, { useEffect, useState } from "react";
+import { productos } from "../../data/productos";
 
 export const FacturaForm = () => {
 
@@ -10,95 +11,93 @@ export const FacturaForm = () => {
     municipalidades,
     //Methods
     getNumeracion, 
-    getMunicipales 
+    getMunicipales    
   } = UseFacturaStore()
+
+  const [productoData, setProductoData] = useState({});
+  const [cantidadProducto, setCantidadProducto] = useState<number>(0);  
+  
+  
+
+  const { numbering_range_id,     
+    observation,
+    payment_form,
+    identificacion,
+    nombres,
+    direccion,
+    email,
+    telefono,
+    tipo_organizacion,
+    tipo_tributo,
+    tipo_documento_id,
+    municipality_id,
+    onInputChange
+  } = UseForm({
+      numbering_range_id: "",
+      reference_code: "ec-593",
+      observation: "",
+      payment_form: "1",
+      identificacion: "",
+      nombres: "",
+      direccion: "",
+      email: "",
+      telefono: "",
+      tipo_organizacion: "",
+      tipo_tributo: "",
+      tipo_documento_id: "",
+      municipality_id: "",
+    });
 
   useEffect(() => {
     getNumeracion()
     getMunicipales()
-
   }, [])
 
-  const onChangeSelect = ({ target }: React.FormEvent<HTMLSelectElement>) => {
-    console.log(target.value)
-    console.log(target.name)
-    
+  const onSubmit = (event : React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Formulario");    
   }
 
-  /*
-    {
-        "numbering_range_id": 4,
-        "reference_code": "I3",
-        "observation": "",
-        "payment_form": "1",
-      "payment_due_date": "2024-12-30",
-        "payment_method_code": "10",
-      "billing_period": {
-            "start_date": "2024-01-10",
-            "start_time": "00:00:00",
-            "end_date": "2024-02-09",
-            "end_time": "23:59:59"
-        },
-        "customer": {
-            "identification": "123456789",
-            "dv": "3",
-            "company": "",
-            "trade_name": "",
-            "names": "Alan Turing",
-            "address": "calle 1 # 2-68",
-            "email": "alanturing@enigmasas.com",
-            "phone": "1234567890",
-            "legal_organization_id": "2",
-            "tribute_id": "21",
-            "identification_document_id": "3",
-            "municipality_id": "980"
-        },
-        "items": [
-            {
-                "code_reference": "12345",
-                "name": "producto de prueba",
-                "quantity": 1,
-                "discount_rate": 20,
-                "price": 50000,
-                "tax_rate": "19.00",
-                "unit_measure_id": 70,
-                "standard_code_id": 1,
-                "is_excluded": 0,
-                "tribute_id": 1,
-                "withholding_taxes": [
-                    {
-                        "code": "06",
-                        "withholding_tax_rate": "7.00"
-                    },
-                    {
-                        "code": "05",
-                        "withholding_tax_rate": "15.00"
-                    }
-                ]
-            },
-            {
-                "code_reference": "54321",
-                "name": "producto de prueba 2",
-                "quantity": 1,
-                "discount_rate": 0,
-                "price": 50000,
-                "tax_rate": "5.00",
-                "unit_measure_id": 70,
-                "standard_code_id": 1,
-                "is_excluded": 0,
-                "tribute_id": 1,
-                "withholding_taxes": []
-            }
-        ]
-    }
-  */
+  const onChangeProduct = ({target}: React.FocusEvent<HTMLSelectElement>) => {        
+
+    if(target.value == "") return
+    
+    const data = productos.filter(p => target.value == p.code_reference)
+
+    setProductoData({
+      ...data,
+      quantity: cantidadProducto,        
+    })
+
+  }
+
+  const onAgregarProducto = () => {            
+
+    if(Object.keys(productoData).length == 0 || cantidadProducto == 0) return
+
+    const prod = productoData
+        
+    setProductoData({
+      ...prod,
+      quantity: cantidadProducto,
+    })
+
+  }
+
+  const onIncrement = () => setCantidadProducto(cantidadProducto + 1)
+  
+
+  const onDecrease = () => {
+    if(cantidadProducto == 0) return
+    setCantidadProducto(cantidadProducto - 1)
+  }
 
   return <>
     <div className="grid content-center p-5">
 
-      <form className="p-3">
+      <form className="p-3" onSubmit={onSubmit}>
         <div className="p-2">
-          <select onChange={onChangeSelect} id="rango" name="rango" className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <select onChange={onInputChange} id="numbering_range_id" name="numbering_range_id" value={numbering_range_id} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
 
             <option value="" selected={true}>Seleccione Rango</option>
             {
@@ -111,31 +110,48 @@ export const FacturaForm = () => {
         </div>
 
         <div className="p-2">
-          <Textarea placeholder="Observación de la factura" rows={8} />
+          <select onChange={onInputChange} id="tipo_documento_id" name="tipo_documento_id" value={tipo_documento_id} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+            <option value="">Seleccione el tipo de documento de identidad del cliente.</option>
+            <option value="1">Registro civil</option>
+            <option value="2">Tarjeta de identidad</option>
+            <option value="3">Cédula de ciudadanía</option>
+            <option value="4">Tarjeta de extranjería</option>
+            <option value="5">Cédula de extranjería</option>
+            <option value="6">NIT</option>
+            <option value="7">Pasaporte</option>            
+            <option value="8">Documento de identificación extranjero</option>
+            <option value="9">PEP</option>
+            <option value="10">NIT otro país</option>
+            <option value="11">NUIP*</option>
+          </select>
+        </div>
+
+        <div className="p-2">
+          <Textarea onChange={onInputChange} placeholder="Observación de la factura" rows={8} id="observation"  name="observation" value={observation} />
         </div>        
 
         <div className="p-2">
-          <Input type="text" name="identificacion" placeholder="N° Identificación cliente"/>
+          <Input type="text" id="identificacion" name="identificacion" value={identificacion} onChange={onInputChange} placeholder="N° Identificación cliente"/>
         </div>
 
         <div className="p-2">
-          <Input type="text" name="nombres" placeholder="Nombres cliente"/>
+          <Input type="text" id="nombres" name="nombres" value={nombres} onChange={onInputChange} placeholder="Nombres cliente"/>
         </div>
 
         <div className="p-2">            
-          <Textarea name="direccion" placeholder="Dirección cliente" rows={4} />
+          <Textarea id="direccion" name="direccion" value={direccion} onChange={onInputChange} placeholder="Dirección cliente" rows={4} />
         </div>
 
         <div className="p-2">
-          <Input type="email" name="correo" placeholder="Correo electrónico cliente"/>          
+          <Input type="email" id="email" name="email" value={email} onChange={onInputChange} placeholder="Correo electrónico cliente"/>          
         </div>
 
         <div className="p-2">
-          <Input type="text" name="telefono" placeholder="Teléfono cliente"/>          
+          <Input type="text" id="telefono" name="telefono" value={telefono} onChange={onInputChange} placeholder="Teléfono cliente"/>          
         </div>
 
         <div className="p-2">
-          <select id="organizacion_legal" name="organizacion_legal" className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <select id="tipo_organizacion" name="tipo_organizacion" value={tipo_organizacion} onChange={onInputChange} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
             <option value="">Seleccione la organización legal del cliente.</option>
             <option value="1">Persona Jurídica</option>
             <option value="2">Persona Natural</option>
@@ -143,7 +159,7 @@ export const FacturaForm = () => {
         </div>
 
         <div className="p-2">
-          <select id="tributos_clientes" name="tributos_clientes" className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <select id="tipo_tributo" name="tipo_tributo" value={tipo_tributo} onChange={onInputChange} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
             <option value="">Seleccione el tributo del cliente.</option>
             <option value="18">IVA</option>
             <option value="21">No aplica *</option>
@@ -151,7 +167,7 @@ export const FacturaForm = () => {
         </div>
 
         <div className="p-2">
-          <select onChange={onChangeSelect} id="municipalidad" name="municipalidad" className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <select onChange={onInputChange} id="municipality_id" name="municipality_id" value={municipality_id} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
 
             <option value="" selected={true}>Seleccione Municipalidad</option>
             {
@@ -162,9 +178,44 @@ export const FacturaForm = () => {
           </select>
 
         </div>
+
+        <hr className="my-6 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+
+        <h4 className="p-2">Seleccione procuto a facturar</h4>
+
+        <div className="p-2">
+          <select name="product" id="producto" onChange={onChangeProduct} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+            <option value="">Selecciona el producto</option>
+            {
+              productos.map(p => {
+                return <option value={p.code_reference} key={p.code_reference}>{p.name}</option>
+              })
+            }
+          </select>
+          
+          <div className="relative flex items-center max-w-[8rem] p-2">
+            <button type="button" onClick={onDecrease} className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                  <svg className="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h16"/>
+                  </svg>
+              </button>
+              <input value={cantidadProducto} type="text" readOnly id="quantity-input" className="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="9" required />
+              <button type="button" onClick={onIncrement}  id="increment-button" className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
+                  <svg className="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 1v16M1 9h16"/>
+                  </svg>
+              </button>
+          </div>
+        </div>
+
+
+        <div className="p-2">
+          <Button type="button" variant="outline" onClick={onAgregarProducto}>Agregar Producto</Button>
+        </div>
+  
         	
         <div className="p-2">
-            <Button type="submit">Enviar Factura</Button>
+            <Button type="submit">Emitir Factura</Button>
         </div>
 
       </form>

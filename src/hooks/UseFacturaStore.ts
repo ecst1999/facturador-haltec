@@ -3,7 +3,6 @@ import baseApi from "../api/base/baseApi"
 import { onLoadMunicipalidades, onLoadNumeracion } from "../store"
 import { getToken } from "../helpers"
 
-
 export const UseFacturaStore = () => {
 
     const dispatch = useDispatch()
@@ -32,6 +31,6 @@ export const UseFacturaStore = () => {
 
     //Methods
     getNumeracion,
-    getMunicipales,
+    getMunicipales
   }
 }
