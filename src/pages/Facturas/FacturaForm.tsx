@@ -1,4 +1,4 @@
-import { Button, Input, Textarea } from "keep-react";
+import { Button, Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Textarea } from "keep-react";
 import { UseFacturaStore, UseForm } from "../../hooks";
 import React, { useEffect, useState } from "react";
 import { productos } from "../../data/productos";
@@ -65,6 +65,7 @@ export const FacturaForm = () => {
     const data = productos.filter(p => target.value == p.code_reference)
 
     setProductoData({
+      ...productoData,
       ...data,
       quantity: cantidadProducto,        
     })
@@ -181,7 +182,7 @@ export const FacturaForm = () => {
 
         <hr className="my-6 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
 
-        <h4 className="p-2">Seleccione procuto a facturar</h4>
+        <h4 className="p-2">Seleccione producto a facturar</h4>
 
         <div className="p-2">
           <select name="product" id="producto" onChange={onChangeProduct} className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
@@ -212,7 +213,35 @@ export const FacturaForm = () => {
         <div className="p-2">
           <Button type="button" variant="outline" onClick={onAgregarProducto}>Agregar Producto</Button>
         </div>
-  
+
+        <hr className="my-6 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                <div className="max-w-[250px]">Nombre productos</div>
+              </TableHead>
+              <TableHead>
+                <div className="w-[80px]">Precio</div>
+              </TableHead>
+              <TableHead>
+                <div className="w-[80px]">Cantidad</div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            
+              <TableRow>
+                <TableCell>
+                  <div className="max-w-[250px] truncate">produ</div>
+                </TableCell>
+                <TableCell>5000</TableCell>
+                <TableCell>3</TableCell>
+              </TableRow>
+            
+          </TableBody>
+        </Table>
         	
         <div className="p-2">
             <Button type="submit">Emitir Factura</Button>
