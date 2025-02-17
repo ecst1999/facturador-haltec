@@ -90,10 +90,10 @@ export const FacturaForm = () => {
 
     emitirFactura(infoFactura).then(r => {
 
-      Swal.fire({
-        title: 'Factura validada',
+      Swal.fire({        
         html: `
-          <p>Factura valida con número: ${r.data.bill.number}</p>
+          <h3>Factura validada</h3>
+          <p>Factura valida con número: ${r.data.bill.number}</p> <br />
           <a href='${r.data.bill.public_url}' target='_blank' class='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'>Ver factura</a>
         `,
         icon: 'success',
