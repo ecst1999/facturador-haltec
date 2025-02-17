@@ -2,6 +2,7 @@ import { Button, Input, Table, TableBody, TableCell, TableHead, TableHeader, Tab
 import { UseFacturaStore, UseForm } from "../../hooks";
 import React, { useEffect, useState } from "react";
 import { productos } from "../../data/productos";
+import Swal from "sweetalert2";
 
 export const FacturaForm = () => {
 
@@ -11,15 +12,16 @@ export const FacturaForm = () => {
     municipalidades,
     //Methods
     getNumeracion, 
-    getMunicipales    
+    getMunicipales,
+    emitirFactura, 
   } = UseFacturaStore()
 
-  const [productoData, setProductoData] = useState({});
-  const [cantidadProducto, setCantidadProducto] = useState<number>(0);  
-  
-  
+  const [productoData, setProductoData] = useState([])
+  const [productoSeleccionado, setproductoSeleccionado] = useState("")
+  const [cantidadProducto, setCantidadProducto] = useState<number>(0)  
 
   const { numbering_range_id,     
+    reference_code,
     observation,
     payment_form,
     identificacion,
@@ -31,12 +33,13 @@ export const FacturaForm = () => {
     tipo_tributo,
     tipo_documento_id,
     municipality_id,
-    onInputChange
+    onInputChange,
+    onResetForm,
   } = UseForm({
       numbering_range_id: "",
-      reference_code: "ec-593",
+      reference_code: "ec593",
       observation: "",
-      payment_form: "1",
+      payment_form: "1",      
       identificacion: "",
       nombres: "",
       direccion: "",
@@ -54,34 +57,72 @@ export const FacturaForm = () => {
   }, [])
 
   const onSubmit = (event : React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Formulario");    
+    event.preventDefault()
+    
+    const infoFactura = {
+      numbering_range_id,
+      reference_code,
+      observation,
+      payment_form,
+      payment_method_code: 10,
+      billing_period: {
+        start_date: "2024-01-10",
+        start_time: "00:00:00",
+        end_date: "2024-02-09",
+        end_time: "23:59:59"
+      },
+      customer : {
+        identification: identificacion,
+        dv: 3,
+        company: "",
+        trade_name: "",
+        names: nombres,
+        address: direccion,
+        email,
+        phone: telefono,
+        legal_organization_id: tipo_organizacion,
+        tribute_id: tipo_tributo,
+        identification_document_id: tipo_documento_id, 
+        municipality_id
+      },
+      items: productoData
+    }
+
+    emitirFactura(infoFactura).then(r => {
+
+      Swal.fire({
+        title: 'Factura validada',
+        html: `
+          <p>Factura valida con número: ${r.data.bill.number}</p>
+          <a href='${r.data.bill.public_url}' target='_blank' class='bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none'>Ver factura</a>
+        `,
+        icon: 'success',
+        showConfirmButton: false
+      })
+      console.log(r)
+    }).catch(e => {
+      console.log(e)
+    })
+
+    onResetForm()
+
+    setProductoData([])
   }
 
   const onChangeProduct = ({target}: React.FocusEvent<HTMLSelectElement>) => {        
-
     if(target.value == "") return
-    
-    const data = productos.filter(p => target.value == p.code_reference)
 
-    setProductoData({
-      ...productoData,
-      ...data,
-      quantity: cantidadProducto,        
-    })
-
+    setproductoSeleccionado(target.value)     
   }
 
-  const onAgregarProducto = () => {            
+  const onAgregarProducto = () => {                
+    const productoInfo = productos.filter(p => productoSeleccionado == p.code_reference)
 
-    if(Object.keys(productoData).length == 0 || cantidadProducto == 0) return
+    const productoNuevo = { ...productoInfo[0], quantity: cantidadProducto }
 
-    const prod = productoData
-        
-    setProductoData({
-      ...prod,
-      quantity: cantidadProducto,
-    })
+    setProductoData([...productoData, productoNuevo])
+    setproductoSeleccionado("")
+    setCantidadProducto(0)
 
   }
 
@@ -232,13 +273,18 @@ export const FacturaForm = () => {
           </TableHeader>
           <TableBody>
             
-              <TableRow>
-                <TableCell>
-                  <div className="max-w-[250px] truncate">produ</div>
-                </TableCell>
-                <TableCell>5000</TableCell>
-                <TableCell>3</TableCell>
-              </TableRow>
+            {
+              productoData.map((res, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <div className="max-w-[250px] truncate">{res.name}</div>
+                  </TableCell>
+                  <TableCell>{res.price}</TableCell>
+                  <TableCell>{res.quantity}</TableCell>
+                </TableRow>
+              ))
+            }
+              
             
           </TableBody>
         </Table>
@@ -250,4 +296,4 @@ export const FacturaForm = () => {
       </form>
     </div>
   </>
-};
+}

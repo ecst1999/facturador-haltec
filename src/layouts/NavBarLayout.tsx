@@ -1,4 +1,4 @@
-import { Navbar, NavbarItem, NavbarContainer, NavbarBrand, NavbarList, NavbarCollapseBtn, NavbarCollapse, Button } from "keep-react"
+import { Navbar, NavbarContainer, NavbarBrand, NavbarList, NavbarCollapseBtn, NavbarCollapse, Button } from "keep-react"
 import { UseAuthStore } from "../hooks"
 
 export const NavBarLayout = () => {
@@ -13,17 +13,13 @@ export const NavBarLayout = () => {
     <Navbar className="p-4">
       <NavbarContainer>
         <NavbarBrand>
-          <img src="/vite.svg" alt="keep" />
+          <img src="https://www.factus.com.co/_astro/favicon.DMncryqX.ico" alt="keep" width={40} />
         </NavbarBrand>
-        <NavbarList>                        
-          <NavbarItem> Crear y validar Factura</NavbarItem>           
-          <NavbarItem>Obtener Facturas</NavbarItem>          
+        <NavbarList>                                                   
           <Button variant="outline" color="error" onClick={onCerrarSesion}>Cerrar sesión</Button>
         </NavbarList>
         <NavbarCollapseBtn />
-        <NavbarCollapse> 
-          <NavbarItem>Crear y validar Factura</NavbarItem>
-          <NavbarItem>Obtener Facturas</NavbarItem>          
+        <NavbarCollapse>                      
           <Button variant="outline" color="error" onClick={onCerrarSesion}>Cerrar sesión</Button>
         </NavbarCollapse>
       </NavbarContainer>

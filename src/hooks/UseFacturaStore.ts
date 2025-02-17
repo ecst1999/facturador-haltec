@@ -24,6 +24,11 @@ export const UseFacturaStore = () => {
       dispatch(onLoadMunicipalidades(data.data))      
     }
 
+    const emitirFactura = async(datosFactura) => {
+      const { data } = await baseApi.post('/v1/bills/validate', datosFactura, {headers})
+      return data
+    }
+
   return {
     //Properties
     rangos_numeracion,
@@ -31,6 +36,7 @@ export const UseFacturaStore = () => {
 
     //Methods
     getNumeracion,
-    getMunicipales
+    getMunicipales,
+    emitirFactura
   }
 }
